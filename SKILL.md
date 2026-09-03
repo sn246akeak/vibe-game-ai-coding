@@ -22,10 +22,14 @@ On invocation:
    - User intake and submission prompts: `references/user-intake.md`
    - Progress board format: `references/progress-format.md`
    - Module implementation loop: `references/module-handoff.md`
-4. Ask only for the minimum user input needed for the current gate. Prefer 1-3 concrete questions or a small submission checklist.
-5. When the user submits a module decision, spreadsheet, asset, prompt batch, or revised file, inspect the actual file/diff before implementing. Do not rely only on remembered context.
-6. Implement the current module end to end when its gate is ready: code, data wiring, assets, tests/manual checks, status update, and concise handoff note.
-7. After acceptance, move the next queued module into the active phase and repeat.
+4. Use helper scripts when their deterministic output fits the task:
+   - Initialize workflow status: `scripts/init_workflow.py`
+   - Create a module micro-PRD: `scripts/new_module.py`
+   - Check workflow files: `scripts/validate_workflow.py`
+5. Ask only for the minimum user input needed for the current gate. Prefer 1-3 concrete questions or a small submission checklist.
+6. When the user submits a module decision, spreadsheet, asset, prompt batch, or revised file, inspect the actual file/diff before implementing. Do not rely only on remembered context.
+7. Implement the current module end to end when its gate is ready: code, data wiring, assets, tests/manual checks, status update, and concise handoff note.
+8. After acceptance, move the next queued module into the active phase and repeat.
 
 ## Core Loop
 

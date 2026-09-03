@@ -105,6 +105,34 @@ docs/ai-coding-workflow/STATUS.md
 
 skill 要求 AI 必须读取当前真实文件或 diff，不能只凭记忆改代码。
 
+## 脚本
+
+仓库包含三个零第三方依赖的辅助脚本。它们不替代 AI 判断，只负责把重复性文件操作稳定下来。
+
+初始化项目进度文件：
+
+```bash
+python scripts/init_workflow.py --project /path/to/game --version v0.1 --engine Godot --promise "one complete playable session"
+```
+
+创建一个模块交接文档：
+
+```bash
+python scripts/new_module.py "card system" --project /path/to/game --purpose "add tactical choices" --source cards.xlsx
+```
+
+检查 workflow 文件结构：
+
+```bash
+python scripts/validate_workflow.py --project /path/to/game
+```
+
+这些脚本默认写入目标项目的：
+
+```text
+docs/ai-coding-workflow/
+```
+
 ## 仓库结构
 
 ```text
@@ -113,6 +141,10 @@ vibe-game-ai-coding/
 |-- README.md
 |-- agents/
 |   `-- openai.yaml
+|-- scripts/
+|   |-- init_workflow.py
+|   |-- new_module.py
+|   `-- validate_workflow.py
 `-- references/
     |-- stage-gates.md
     |-- user-intake.md
@@ -225,6 +257,34 @@ I updated cards.xlsx. Use $vibe-game-ai-coding, read the actual file, summarize 
 
 The skill requires the AI to inspect the actual current file or diff before changing the project. Memory is not the source of truth.
 
+## Scripts
+
+The repository includes three helper scripts with no third-party dependencies. They do not replace AI judgment; they simply make repeated file operations deterministic.
+
+Initialize a project progress file:
+
+```bash
+python scripts/init_workflow.py --project /path/to/game --version v0.1 --engine Godot --promise "one complete playable session"
+```
+
+Create a module handoff document:
+
+```bash
+python scripts/new_module.py "card system" --project /path/to/game --purpose "add tactical choices" --source cards.xlsx
+```
+
+Validate workflow file structure:
+
+```bash
+python scripts/validate_workflow.py --project /path/to/game
+```
+
+By default, these scripts write into the target project's:
+
+```text
+docs/ai-coding-workflow/
+```
+
 ## Repository Structure
 
 ```text
@@ -233,6 +293,10 @@ vibe-game-ai-coding/
 |-- README.md
 |-- agents/
 |   `-- openai.yaml
+|-- scripts/
+|   |-- init_workflow.py
+|   |-- new_module.py
+|   `-- validate_workflow.py
 `-- references/
     |-- stage-gates.md
     |-- user-intake.md
