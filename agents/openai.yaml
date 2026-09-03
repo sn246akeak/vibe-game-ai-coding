@@ -1,0 +1,8 @@
+interface:
+  display_name: "Vibe Game AI Coding"
+  short_description: "分阶段推进 AI 游戏开发工作流"
+  brand_color: "#2563EB"
+  default_prompt: "Use $vibe-game-ai-coding to guide this game project through staged intake, module implementation, validation, and version completion."
+
+policy:
+  allow_implicit_invocation: true
