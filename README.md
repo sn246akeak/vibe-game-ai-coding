@@ -20,14 +20,14 @@
 
 ```bash
 cd ~/.codex/skills
-git clone <this-repo-url> vibe-game-ai-coding
+git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
 ```
 
 Windows 常见路径：
 
 ```powershell
 cd $env:USERPROFILE\.codex\skills
-git clone <this-repo-url> vibe-game-ai-coding
+git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
 ```
 
 安装后，Codex 的 skill 列表中应出现 `vibe-game-ai-coding`。
@@ -140,14 +140,14 @@ Place this repository inside your local Codex skills directory:
 
 ```bash
 cd ~/.codex/skills
-git clone <this-repo-url> vibe-game-ai-coding
+git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
 ```
 
 Common Windows path:
 
 ```powershell
 cd $env:USERPROFILE\.codex\skills
-git clone <this-repo-url> vibe-game-ai-coding
+git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
 ```
 
 After installation, Codex should list `vibe-game-ai-coding` as an available skill.
