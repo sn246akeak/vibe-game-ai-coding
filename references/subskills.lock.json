@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "dependencies": {
+    "game-design-theory": {
+      "source": {
+        "repo": "pluginagentmarketplace/custom-plugin-game-developer",
+        "path": "skills/game-design-theory",
+        "ref": "aa7edfe267b34eac63d888f60b13e08aca7850ed"
+      },
+      "sha256": "99d1d45df594fdd62e3d6d6c277f4750444387488357378e6a257b21728d8db1",
+      "files": 4,
+      "license_files": [
+        "LICENSE"
+      ],
+      "license_review": "not assessed; upstream content is not redistributed"
+    },
+    "game-ui-ux": {
+      "source": {
+        "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+        "path": "skills/disciplines/game-ui-ux",
+        "ref": "b105e1cf617adf0b68ed98790a716bbb60993179"
+      },
+      "sha256": "52a3987adc55ccc3afc3f9b3b2414394ae17dc2c53b119a5bda4020383a99e01",
+      "files": 2,
+      "license_files": [
+        "LICENSE"
+      ],
+      "license_review": "not assessed; upstream content is not redistributed"
+    },
+    "game-feel": {
+      "source": {
+        "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+        "path": "skills/disciplines/game-feel",
+        "ref": "b105e1cf617adf0b68ed98790a716bbb60993179"
+      },
+      "sha256": "36befa80b91f3a52db9fb89624ffc764858fb560609d8cd9f654d0062250ab5a",
+      "files": 2,
+      "license_files": [
+        "LICENSE"
+      ],
+      "license_review": "not assessed; upstream content is not redistributed"
+    },
+    "godot": {
+      "source": {
+        "repo": "saschb2b/skills",
+        "path": "skills/engineering/godot",
+        "ref": "91187b37de762ec19155895a691fc34a4d994f58"
+      },
+      "sha256": "16eac30a0fa84d428a1f87fdfa1c5fc41fee672e97c0994eee8f5f82accd09a9",
+      "files": 30,
+      "license_files": [
+        "LICENSE"
+      ],
+      "license_review": "not assessed; upstream content is not redistributed"
+    },
+    "develop-web-game": {
+      "source": {
+        "repo": "openai/skills",
+        "path": "skills/.curated/develop-web-game",
+        "ref": "77963424cd7687fd52e5fcfdd3f08d826ab9b1ab"
+      },
+      "sha256": "8e07de670f4d6b2b54ed4670ab61fdc3f46a1aaf2a133c8cf6ea296c4cc5ac41",
+      "files": 7,
+      "license_files": [],
+      "license_review": "not assessed; upstream content is not redistributed"
+    },
+    "higgsfield-game-generation": {
+      "source": {
+        "repo": "higgsfield-ai/skills",
+        "path": "higgsfield-game-generation",
+        "ref": "9db2e5bf22ff93d0bffb48664a8d0d6bb417082c"
+      },
+      "sha256": "f33ee2d57ad52872418bb7639757b18fa6010f7c001f5a9cc04fed3e1dcace76",
+      "files": 21,
+      "license_files": [
+        "LICENSE"
+      ],
+      "license_review": "not assessed; upstream content is not redistributed"
+    },
+    "threejs-game-ui-designer": {
+      "source": {
+        "repo": "majidmanzarpour/threejs-game-skills",
+        "path": "skills/threejs-game-ui-designer",
+        "ref": "e5f301d548bb18c530afbece78cd25082f4cda9c"
+      },
+      "sha256": "f3a277e9049996e095030cf3cc05b98930ff6ca8146b54d9160817acd5a369a8",
+      "files": 3,
+      "license_files": [
+        "LICENSE"
+      ],
+      "license_review": "not assessed; upstream content is not redistributed"
+    },
+    "multiplayer-game": {
+      "source": {
+        "repo": "rivet-dev/skills",
+        "path": "multiplayer-game",
+        "ref": "ba5d3db3d7489cfc6190fd0de45b96e3787e1ea3"
+      },
+      "sha256": "3532cd2f5745cdc9110dbb637dec5f0eef31fb1aa870f17f634fb973f996ebab",
+      "files": 101,
+      "license_files": [],
+      "license_review": "not assessed; upstream content is not redistributed"
+    }
+  }
+}

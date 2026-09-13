@@ -1,6 +1,6 @@
 # Stage Gates
 
-This reference defines the standard staged workflow for an AI-coded vibe game. Use it as the source of truth when deciding which phase should run next.
+This reference defines outputs and acceptance criteria for an AI-coded vibe game. The actual next module comes from `workflow.json`, not from phase numbers alone. Gameplay and data phases can repeat per module; a prerequisite data pipeline may precede its gameplay integration. Sample approval precedes batch art. The user can explicitly defer optional work, but core gameplay, PRD, playable-session and delivery gates remain required.
 
 ## Phase 0: Project Charter
 

@@ -1,394 +1,128 @@
-# Vibe Game AI Coding Skill
+# Vibe Game AI Coding
 
-中文 | [English](#english)
+[English](README.en.md) | 中文
 
-一个用于 AI coding 游戏项目的 Codex skill。它把“从模糊玩法灵感到固定版本交付”的过程拆成可推进、可验收、可复用的阶段工作流：玩法澄清、第一版 PRD、白盒 MVP、玩法模块插入、外部表格/配置管线、美术批量生产与接入、测试打包和复盘。
+一套从玩法想法推进到固定版本交付的 Codex skill。AI 分阶段引导你提交材料或共同完成设计，每次只落地一个模块，验证并由你验收后再进入下一轮。
 
-这个 skill 的核心不是替你一次性写完整游戏，而是让 AI 像制作人加工程师一样分阶段引导你提交材料、冻结当前模块、落地实现、验证结果，并在验收后进入下一轮。
-
-## 适用场景
-
-- 你想用 AI coding 做一个游戏，但还没有稳定玩法。
-- 你已经有 HTML 原型、Godot/Unity/网页项目或其他可运行原型，想继续工程化。
-- 你希望把卡牌、事件、角色、关卡、美术、动画、音频等模块逐个插入，而不是一次性把需求堆给 AI。
-- 你希望自己在 AI 外修改表格、JSON、CSV、素材文件，然后让 AI 读取真实文件并更新工程。
-- 你希望每个固定版本都有进度、验收门、交付记录和下个版本 backlog。
+**v1.0.0：引导规范 + 可执行状态机 + 内容变更检查 + 专项 skill 路由。** 它不是无人值守的造游戏程序，也不自带游戏引擎或付费美术服务。
 
 ## 安装
 
-把本仓库放入本机 Codex skills 目录：
+需要 Codex 和 Python 3.10+。核心脚本只使用 Python 标准库。在 Codex 中可以这样提出：
 
-```bash
-cd ~/.codex/skills
-git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
-```
+> 使用 skill-installer，从 sn246akeak/vibe-game-ai-coding 仓库根目录安装 vibe-game-ai-coding。
 
-Windows 常见路径：
+也可手动克隆到 Codex 的 skills 目录。PowerShell 示例：
 
 ```powershell
-cd $env:USERPROFILE\.codex\skills
-git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
+$skills = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME "skills" } else { Join-Path $HOME ".codex" "skills" }
+git clone https://github.com/sn246akeak/vibe-game-ai-coding.git (Join-Path $skills "vibe-game-ai-coding")
 ```
 
-安装后，Codex 的 skill 列表中应出现 `vibe-game-ai-coding`。
+已有目录时先检查本地修改，不要覆盖。安装后重新开启 Codex 会话以发现 skill。Godot、浏览器测试工具、素材生成工具按项目需要单独准备。
 
-## 快速开始
+## 怎么用
 
-在一个游戏项目中对 Codex 说：
+在游戏项目中对 AI 说：
 
 ```text
-运行 $vibe-game-ai-coding。当前目标是 v0.1，请从项目现状开始，引导我按阶段提交材料、实现模块、验收后再推进下一模块。
+运行 $vibe-game-ai-coding。
+目标版本是 v0.1，我想做一个……游戏。
+请先检查当前工程，每次只引导我完成当前模块需要的材料；
+材料和设计经我确认后再实施，展示可检查的结果；
+我验收当前模块后，再进入下一模块。
 ```
 
-也可以从某个模块开始：
+恢复工作：
 
 ```text
-运行 $vibe-game-ai-coding。这个版本我要先插入卡牌系统，请先让我提交当前模块需要的表格和玩法规则，然后你根据真实文件落地实现。
+继续运行 $vibe-game-ai-coding，读取已有 workflow.json 和实际文件，
+告诉我当前模块、已验收进度、阻塞项以及这次需要我提交什么。
+不要重建已有进度，不要从聊天记忆猜测文件变化。
 ```
 
-## 工作方式
+你不必亲自运行所有脚本。AI 负责执行、更新进度和整理证据，你负责方向、设计确认、体验反馈和验收。不会要求你一开始填写整套材料。
 
-skill 会维护一个项目本地进度文件，默认位置是：
+## 实现流程
 
-```text
-docs/ai-coding-workflow/STATUS.md
-```
-
-如果项目已有更合适的日志目录，AI 会沿用项目习惯。
-
-每一阶段都遵循同一个循环：
-
-1. 澄清当前阶段目标和验收标准。
-2. 让用户只提交当前阶段必要材料。
-3. 把材料转成 PRD 切片、模块契约、数据结构或美术规格。
-4. AI 在工程中落地实现。
-5. 运行自动检查或手动验收步骤。
-6. 更新进度文件。
-7. 当前模块验收后，再推进下一模块。
-
-## 子 skill 自动编排
-
-总 skill 负责版本范围、阶段状态、用户提交、验收和推进；专业子 skill 只处理当前委派的有限任务。阶段和工程上下文确定后，可以让 AI 运行：
-
-```bash
-python scripts/route_subskills.py --phase 2 --engine godot
-```
-
-典型自动路由包括：
-
-- `game-design-theory`：核心玩法、PRD 和模块价值复核。
-- `godot`：Godot 场景、资源、信号、实现和发布验证。
-- `develop-web-game`：可操作的 HTML/JavaScript 原型及 Playwright 验证。
-- `game-ui-ux`：屏幕流、HUD、焦点、缩放和状态连接。
-- `game-feel`：机制通过功能验证后的反馈与手感。
-- `higgsfield-game-generation`：可选的美术和音频资产生产，不接管游戏代码。
-- `threejs-game-ui-designer`：仅 Three.js 最终 UI 阶段，替换通用 UI skill。
-- `multiplayer-game`：仅明确采用 RivetKit 时启用。
-
-依赖来源和固定版本记录在 `references/subskills.json`。检查本机安装情况：
-
-```bash
-python scripts/check_subskills.py
-```
-
-子 skill 独立安装在 Codex skills 目录中，不复制进本仓库。首次使用时，可以让 Codex 读取该清单并通过 `skill-installer` 安装缺少的核心能力；Higgsfield、Three.js 和 RivetKit 等可选能力只在项目实际采用时安装或启用。
-
-每次委派都必须使用 `references/subskill-contract.md` 限定目标、输入文件、允许范围、禁止改动、产出和返回验收门。子 skill 完成不等于模块验收，也不能自行推进下一阶段。
-
-## 标准阶段
-
-| 阶段 | 目标 | 典型产出 |
+| 阶段 | 你与 AI 共同确定 | 落地与验收产物 |
 |---|---|---|
-| Phase 0 | 项目建档与版本目标 | 固定版本目标、范围、风险、初始 backlog |
-| Phase 1 | 核心玩法澄清 | 核心循环、状态、胜负条件、关键体验 |
-| Phase 2 | 第一版 PRD | 可实现 PRD、模块队列、数据源、验收标准 |
-| Phase 3 | 白盒 MVP | 可完整游玩的一局、基础状态机、占位 UI |
-| Phase 4 | 玩法模块插入 | 模块微型 PRD、实现、验证、用户验收 |
-| Phase 5 | 外部数据管线 | 表格/CSV/JSON/资源导入、校验脚本、运行时数据 |
-| Phase 6 | 美术规格与批量生产 | 风格锚点、资产清单、命名规则、批量 prompt |
-| Phase 7 | 美术接入与迭代 | 导入设置、图层、动画、场景摆放、截图验证 |
-| Phase 8 | 音频与反馈 | SFX、音乐、动效时序、设置项 |
-| Phase 9 | 版本完成 | 打包、回归检查、实现日志、脚本沉淀、下版 backlog |
+| 0 版本目标 | 平台、引擎、目标体验、范围 | 项目约定与初始队列 |
+| 1 核心玩法 | 玩家动作、压力、取舍、胜负与重开 | 玩法闭环及可验证场景 |
+| 2 第一版 PRD | 系统边界、数据、场景、非目标 | 确认后的 PRD 与模块顺序 |
+| 3 白盒 MVP | 最小可玩承诺 | 一次完整游戏流程 |
+| 4 玩法模块 | 触发、状态、规则、UI、测试 | 逐模块的可玩增量 |
+| 5 外部数据 | 稳定 ID、可改字段、导入规则 | 表格修改到引擎行为的闭环 |
+| 6 美术样张 | 风格、构图、规格、统一提示词 | 引擎内样张确认与素材清单 |
+| 7 美术落地 | 批量生产、分层、动画、修改范围 | 集成截图、交互与视觉验收 |
+| 8 音效与反馈 | 事件、时序、音量、动效 | 完整一局的视听检查 |
+| 9 固定版本交付 | 回归、已知问题、下一版范围 | 可运行版本、日志和复用命令 |
 
-## 模块插入流程
+阶段是工作类型，不是强制一次性的流水线。玩法/数据阶段可按模块重复，依赖的数据管线可以先于玩法接入。可选工作可由你明确延期，核心玩法、PRD、可玩闭环和交付不能跳过。
 
-当你想加入一个新模块，比如卡牌系统、事件系统、角色技能、敌人行为、关卡机制或美术批量资产时，AI 会先冻结模块契约：
-
-- 模块目的是什么。
-- 它在哪个核心循环节点触发。
-- 会影响哪些状态。
-- 数据从哪里来，哪些字段允许用户编辑。
-- 需要哪些 UI、动画、音效或反馈。
-- 有哪些验收标准。
-- 如何关闭、回滚或延后。
-
-然后 AI 才会修改工程。实现完成后，模块会进入 `needs_user_review`，等待你确认是否 `accepted`，再继续下一个模块。
-
-## 外部文件协作
-
-如果你在 AI 外修改了表格、CSV、JSON、素材文件或脚本，正确用法是：
+每个模块遵循：
 
 ```text
-我已经修改了 cards.xlsx。运行 $vibe-game-ai-coding，请读取真实文件，先总结变化，再更新运行时数据和工程实现。
+收集材料 → 共建设计 → 确认规格 → 实施 → 验证 → 等你验收 → 下一模块
+                         ↑                      |
+                         └──── 需要修改 ────────┘
 ```
 
-skill 要求 AI 必须读取当前真实文件或 diff，不能只凭记忆改代码。
+大模块可以拆成多个独立验收的小模块，例如：卡牌数据合同、抽牌出牌最小闭环、完整效果与 UI、数值与反馈。子 skill 完成任务不等于你的验收。
 
-## 脚本
+## 文件与脚本
 
-仓库包含三个零第三方依赖的辅助脚本。它们不替代 AI 判断，只负责把重复性文件操作稳定下来。
+工程内的默认状态目录为 `docs/ai-coding-workflow/`：
 
-初始化项目进度文件：
+- `workflow.json`：唯一权威状态，包含模块队列、输入快照、证据、委派与决策历史。
+- `STATUS.md`：自动生成的进度看板，不能独立手改推进状态。
+- 模块 PRD、验收证据、BACKLOG：按实际需要创建，由状态记录关联。
+- `IMPLEMENTATION_LOG.md`：状态与证据日志导出，不覆盖已有文件。
+
+| 脚本 | 用途 |
+|---|---|
+| `workflow.py` | 初始化、排队、依赖检查、状态推进、修订、延期、备注、委派、验收、日志导出 |
+| `diff_content.py` | CSV/JSON 按稳定 ID 比较，只报告指定可改字段；新增、删除和其他字段变化单列 |
+| `route_subskills.py` | 按当前阶段与引擎选择专项 skill，并核验锁定内容 |
+| `check_subskills.py` | 检查全部专项 skill 的安装与内容状态 |
+| `pin_subskills.py` | 维护者从固定上游提交生成内容锁，不安装或执行上游代码 |
+| `new_module.py` | 生成模块 PRD 文档骨架，不自动推进队列 |
+| `init_workflow.py`、`validate_workflow.py` | 旧版 Markdown 工作流兼容工具，不与 v1 状态混用 |
+
+命令在安装后的 skill 目录执行；`GAME` 替换为实际游戏工程绝对路径：
 
 ```bash
-python scripts/init_workflow.py --project /path/to/game --version v0.1 --engine Godot --promise "one complete playable session"
+python scripts/workflow.py --project "GAME" init --version v0.1 --engine godot
+python scripts/workflow.py --project "GAME" status
+python scripts/workflow.py --project "GAME" validate
+python scripts/route_subskills.py --workflow "GAME/docs/ai-coding-workflow/workflow.json" --project "GAME"
 ```
 
-创建一个模块交接文档：
+完整操作见 [状态运行说明](references/workflow-runtime.md)。已有旧日志不会被覆盖，可指定新的 `--directory` 保存 v1；已交付的版本用新目录开启下一版。
+
+## 外部表格与美术
+
+你可以说：“我修改了表格里的 cost 和 description。读取实际文件，按 ID 比较，只同步这两列，新增删除先单列，再验证游戏表现。”
+
+脚本会对冻结输入做哈希检查：文件变化后必须重新读取、修订并确认，不能拿旧快照继续推进。`diff_content.py` 不直接改游戏，也不解析 XLSX；XLSX 读取、公式处理、业务校验和运行时导入由项目适配器承担。详见 [数据流程](references/data-workflow.md)。
+
+美术从已跑通的 HTML/白盒出发，先确认引擎内样张，再用统一规格和素材清单生产人物、背景、UI、动画与音频。保留原始素材与运行时派生物，迭代只针对指定素材 ID。详见 [美术流程](references/art-workflow.md)。本仓库没有伪装成通用能力的项目专用图集、抠图或 Godot 导入脚本。
+
+## 专项 Skill 接入
+
+核心设计、UI、反馈分别使用 `game-design-theory`、`game-ui-ux`、`game-feel`。引擎与原型按需使用 `godot`、`develop-web-game`；Higgsfield、Three.js UI、RivetKit 联机为条件接入。
+
+来源与固定提交见 [subskills.json](references/subskills.json)，内容摘要见 [subskills.lock.json](references/subskills.lock.json)。专项 skill 单独安装，不随本仓库分发。让 AI 使用内置 skill-installer 按清单的 repo/path/ref 安装当前需要的项，再检查实际路由。不要无条件安装全部依赖或覆盖已定制的目录。
+
+`verified` 仅表示安装内容与锁定快照一致，不保证引擎/API 兼容、凭据、服务可用性、安全或许可证。一些上游路径使用历史快照；调用时仍需核对官方文档。缺失或修改过的依赖须明确处理，或记录由主 skill 直接完成的降级方案。详见 [路由边界](references/skill-routing.md) 和 [委派合同](references/subskill-contract.md)。
+
+## 验证与边界
 
 ```bash
-python scripts/new_module.py "card system" --project /path/to/game --purpose "add tactical choices" --source cards.xlsx
-```
-
-检查 workflow 文件结构：
-
-```bash
-python scripts/validate_workflow.py --project /path/to/game
-```
-
-检查专业子 skill 是否安装：
-
-```bash
+python -m unittest discover -s tests -v
 python scripts/check_subskills.py
 ```
 
-按当前阶段和工程上下文选择子 skill：
+测试覆盖完整状态循环、跨进程恢复、门禁、输入/证据变化、依赖插入、委派、旧日志保护与内容差异。测试使用模拟确认和临时文件，不能代替真实游戏制作验收。
 
-```bash
-python scripts/route_subskills.py --phase 4 --engine godot --mechanics-verified
-```
-
-这些脚本默认写入目标项目的：
-
-```text
-docs/ai-coding-workflow/
-```
-
-## 仓库结构
-
-```text
-vibe-game-ai-coding/
-|-- SKILL.md
-|-- README.md
-|-- agents/
-|   `-- openai.yaml
-|-- scripts/
-|   |-- check_subskills.py
-|   |-- init_workflow.py
-|   |-- new_module.py
-|   |-- route_subskills.py
-|   |-- subskill_router.py
-|   `-- validate_workflow.py
-|-- references/
-|   |-- stage-gates.md
-|   |-- user-intake.md
-|   |-- progress-format.md
-|   |-- module-handoff.md
-|   |-- skill-routing.md
-|   |-- subskill-contract.md
-|   `-- subskills.json
-`-- tests/
-    `-- test_subskill_routing.py
-```
-
-## English
-
-A Codex skill for AI-coding game projects. It turns the path from a vague game idea to a fixed-version delivery into a staged, inspectable workflow: gameplay clarification, first PRD, white-box MVP, gameplay module insertion, external data/config pipelines, batch art production, art integration, validation, packaging, and retrospective logging.
-
-The skill is not designed to ask the AI to build an entire game in one pass. Instead, it makes the AI act like a producer-engineer: guide the user through one phase at a time, request only the current materials, freeze the active module, implement it, validate it, update progress, and advance only after acceptance.
-
-## Use Cases
-
-- You want to build a game with AI coding but do not yet have a stable gameplay loop.
-- You already have an HTML prototype, Godot/Unity/web project, or runnable prototype and want to turn it into a structured project.
-- You want to insert systems such as cards, events, characters, levels, art, animation, and audio one module at a time.
-- You want to edit spreadsheets, JSON, CSV, or assets outside the AI chat, then have the AI read the actual files and update the project.
-- You want every fixed version to have visible progress, gates, validation notes, implementation logs, and a backlog for the next version.
-
-## Installation
-
-Place this repository inside your local Codex skills directory:
-
-```bash
-cd ~/.codex/skills
-git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
-```
-
-Common Windows path:
-
-```powershell
-cd $env:USERPROFILE\.codex\skills
-git clone https://github.com/sn246akeak/vibe-game-ai-coding.git vibe-game-ai-coding
-```
-
-After installation, Codex should list `vibe-game-ai-coding` as an available skill.
-
-## Quick Start
-
-Inside a game project, ask Codex:
-
-```text
-Use $vibe-game-ai-coding. The target is v0.1. Start from the current project state, guide me through staged submissions, implement each module, and only move forward after acceptance.
-```
-
-Or start from a specific module:
-
-```text
-Use $vibe-game-ai-coding. For this version I want to insert a card system first. Ask me for the table and gameplay rules needed for this module, then implement it from the actual files.
-```
-
-## Workflow
-
-The skill maintains a project-local progress file, usually:
-
-```text
-docs/ai-coding-workflow/STATUS.md
-```
-
-If the project already has a better workflow log location, the AI should follow the existing convention.
-
-Every phase uses the same loop:
-
-1. Clarify the phase goal and acceptance criteria.
-2. Ask the user for only the necessary current materials.
-3. Convert those materials into a PRD slice, module contract, data schema, or art specification.
-4. Implement the result in the project.
-5. Run automated checks or manual validation.
-6. Update the progress file.
-7. Move to the next module only after acceptance.
-
-## Subskill Orchestration
-
-The parent skill owns version scope, phase state, user submissions, acceptance, and advancement. Specialist skills receive only one bounded delegated task. Once phase and project context are known, the agent can run:
-
-```bash
-python scripts/route_subskills.py --phase 2 --engine godot
-```
-
-The router can select design theory, Godot, browser prototyping, UI/UX, game feel, asset generation, Three.js UI, or RivetKit multiplayer according to the active phase and accepted project choices. It never treats a child skill as a second orchestrator.
-
-Pinned dependency sources live in `references/subskills.json`. Check the local installation with:
-
-```bash
-python scripts/check_subskills.py
-```
-
-Subskills are installed separately in the Codex skills directory rather than copied into this repository. On first use, ask Codex to read the manifest and use `skill-installer` for missing core capabilities. Optional Higgsfield, Three.js, and RivetKit capabilities should be installed or activated only when the project actually selects them.
-
-Every handoff uses `references/subskill-contract.md` to declare the objective, actual source files, allowed scope, forbidden changes, required outputs, and return gate. Child completion does not accept a module or authorize the next phase.
-
-## Standard Phases
-
-| Phase | Goal | Typical Output |
-|---|---|---|
-| Phase 0 | Project charter and version target | Version scope, risks, initial backlog |
-| Phase 1 | Core gameplay clarification | Core loop, states, win/loss conditions, target feel |
-| Phase 2 | First PRD | Buildable PRD, module queue, data sources, acceptance criteria |
-| Phase 3 | White-box MVP | One complete playable session, basic state machine, placeholder UI |
-| Phase 4 | Gameplay module insertion | Module micro-PRD, implementation, validation, user acceptance |
-| Phase 5 | External data pipeline | Spreadsheet/CSV/JSON/resource import, validation scripts, runtime data |
-| Phase 6 | Art specs and batch production | Style anchor, asset manifest, naming rules, batch prompts |
-| Phase 7 | Art integration and iteration | Import settings, layers, animation, scene placement, screenshot checks |
-| Phase 8 | Audio and feedback | SFX, music, animation timing, settings |
-| Phase 9 | Version completion | Build, regression checklist, implementation log, scripts, next backlog |
-
-## Module Insertion
-
-For a module such as a card system, event system, character ability set, enemy behavior, level mechanic, or batch art package, the AI first freezes a module contract:
-
-- Module purpose.
-- Where it appears in the core loop.
-- Game states it touches.
-- Source of truth and editable fields.
-- UI, animation, audio, or feedback requirements.
-- Acceptance criteria.
-- Disable, rollback, or defer path.
-
-Only then should the AI modify project files. Once implemented, the module enters `needs_user_review`; after the user accepts it, the module becomes `accepted` and the next module can begin.
-
-## External File Collaboration
-
-If you edit a spreadsheet, CSV, JSON, asset file, or script outside the AI chat, use a prompt like:
-
-```text
-I updated cards.xlsx. Use $vibe-game-ai-coding, read the actual file, summarize the changes first, then update the runtime data and project implementation.
-```
-
-The skill requires the AI to inspect the actual current file or diff before changing the project. Memory is not the source of truth.
-
-## Scripts
-
-The repository includes three helper scripts with no third-party dependencies. They do not replace AI judgment; they simply make repeated file operations deterministic.
-
-Initialize a project progress file:
-
-```bash
-python scripts/init_workflow.py --project /path/to/game --version v0.1 --engine Godot --promise "one complete playable session"
-```
-
-Create a module handoff document:
-
-```bash
-python scripts/new_module.py "card system" --project /path/to/game --purpose "add tactical choices" --source cards.xlsx
-```
-
-Validate workflow file structure:
-
-```bash
-python scripts/validate_workflow.py --project /path/to/game
-```
-
-Check installed specialist skills:
-
-```bash
-python scripts/check_subskills.py
-```
-
-Select specialists for the active phase:
-
-```bash
-python scripts/route_subskills.py --phase 4 --engine godot --mechanics-verified
-```
-
-By default, these scripts write into the target project's:
-
-```text
-docs/ai-coding-workflow/
-```
-
-## Repository Structure
-
-```text
-vibe-game-ai-coding/
-|-- SKILL.md
-|-- README.md
-|-- agents/
-|   `-- openai.yaml
-|-- scripts/
-|   |-- check_subskills.py
-|   |-- init_workflow.py
-|   |-- new_module.py
-|   |-- route_subskills.py
-|   |-- subskill_router.py
-|   `-- validate_workflow.py
-|-- references/
-|   |-- stage-gates.md
-|   |-- user-intake.md
-|   |-- progress-format.md
-|   |-- module-handoff.md
-|   |-- skill-routing.md
-|   |-- subskill-contract.md
-|   `-- subskills.json
-`-- tests/
-    `-- test_subskill_routing.py
-```
+状态机不能证明 AI 写入的“测试通过”是真的，也不能证明决策文本一定来自用户。AI 必须使用真实检查结果与用户原话，不得自动自验收；代码变更后需重新测试。该 skill 不自动发布仓库、部署游戏、购买服务、登录账户或启动后台代理。

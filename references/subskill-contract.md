@@ -1,37 +1,25 @@
-# Subskill Delegation Contract
+# Specialist Contract
 
-Use this contract before handing a bounded task to a specialist skill. Record the active delegation in the project `STATUS.md`.
+Before a bounded specialist task, write a project-local JSON contract. Use actual module IDs and file paths. Required fields must be nonempty:
 
-```yaml
-phase: Phase 4
-module: card-system
-delegate: game-feel
-mode: module-polish
-objective: Make card play and resolution readable and satisfying.
-input_source:
-  - docs/ai-coding-workflow/modules/card-system.md
-  - data/cards.xlsx
-  - current engine implementation
-allowed_scope:
-  - card play feedback
-  - resource-change feedback
-  - timing values owned by presentation
-forbidden:
-  - changing card rules or balance data
-  - changing fixed-version scope
-  - starting another module
-required_output:
-  - changed files or generated assets
-  - validation evidence
-  - known limitations
-return_gate: Phase 4 module acceptance
+```json
+{
+  "module": "cards",
+  "delegate": "game-feel",
+  "objective": "Make card play and resolution readable.",
+  "input_source": ["docs/modules/cards.md", "data/cards.csv", "docs/evidence/cards-functional.md"],
+  "allowed_scope": ["card presentation and timing"],
+  "forbidden": ["changing card rules", "changing balance", "starting another module"],
+  "required_output": ["changed files", "validation evidence", "known limitations"],
+  "return_gate": "cards: needs_user_review"
+}
 ```
 
-## Handoff
+Call `workflow.py delegate cards --contract docs/contracts/cards.json` with the global project argument. The runtime checks required fields, current module/state, route eligibility and installed content. Contract fields describe boundaries; the script does not sandbox edits or validate every listed source path. The parent must inspect those actual inputs before work.
 
-1. The orchestrator reads the selected child skill's `SKILL.md` in full and any references required by that task.
-2. Give the child only the contract, actual source files, and minimum project context needed for the bounded work.
-3. The child implements or reviews the specialist slice and returns artifacts plus evidence. It does not mark the module accepted.
-4. The orchestrator inspects the actual diff/files, runs the phase validation, updates `STATUS.md`, and asks the user for the current gate decision.
+1. Read the selected skill and its necessary references.
+2. Apply it in the same agent, or use a real available delegation facility within the user's authorization. Supply only the contract and relevant project context.
+3. Inspect returned files/diff, validate behavior and record fresh evidence.
+4. Submit the current module for user review; this clears Active Delegation. Only the user's decision permits acceptance.
 
-If a child skill conflicts with the fixed PRD, module contract, engine version, or current repository state, the repository and accepted project documents win. Record the conflict instead of silently changing the design.
+Repository facts, the accepted PRD and module scope constrain specialist advice. Report conflicts and return a proposal instead of silently changing engine, provider, rules or version scope.

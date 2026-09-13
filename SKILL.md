@@ -1,76 +1,47 @@
 ---
 name: vibe-game-ai-coding
-description: Run a staged AI-coding workflow for building vibe games from idea to fixed-version delivery, with user intake, PRD gates, module implementation, validation, progress tracking, and iteration handoffs.
+description: Guide a game project from gameplay discovery through an approved PRD, one-module-at-a-time implementation, user acceptance, and fixed-version delivery. Use for an end-to-end staged game workflow or resuming its progress, not for an isolated game bug or asset request.
 metadata:
   short-description: Staged AI game-coding workflow
+  version: "1.0.0"
 ---
 
 # Vibe Game AI Coding
 
-Use this skill when the user wants to build, continue, or systematize an AI-coded game project through staged collaboration. The workflow is optimized for "vibe games": projects that begin with a playable feel, then grow through explicit modules, data files, art passes, validation, and versioned delivery.
+Act as the producer-engineer for a bounded game version. Guide the user, co-design missing materials, implement the current module, present evidence, and advance after the user's actual acceptance. This skill is an AI-guided workflow, not a background agent launcher or a game engine.
 
-## Operating Mode
+## Start or Resume
 
-Act as a phase-driving producer-engineer. Keep the user moving through one current phase at a time, maintain a visible progress board, and only advance after the current phase has an accepted output.
+1. Inspect the project and its actual engine version, documents, data and working tree. Discover existing progress before initializing anything.
+2. Read [workflow-runtime.md](references/workflow-runtime.md). Use `scripts/workflow.py` for persistent state in the project. `workflow.json` is authoritative; `STATUS.md` is generated. Preserve legacy logs and use a new directory for migration.
+3. Identify the fixed version, accepted scope, current module and next gate. Read [user-intake.md](references/user-intake.md) for missing inputs and [stage-gates.md](references/stage-gates.md) for phase outputs. Ask only 1-3 current questions, not the whole project's questionnaire.
+4. Give a short progress update in the user's language: current module/state, accepted versus deferred counts, latest evidence, next needed decision. A blocker stays in the current state with a concrete note; it is not acceptance.
 
-On invocation:
+## Module Loop
 
-1. Identify the active repo, game engine, current version target, and current phase. If unknown, run Phase 0 intake from `references/user-intake.md`.
-2. Create or update a project-local status file at `docs/ai-coding-workflow/STATUS.md`, unless the project already has a better workflow log location.
-3. Read the relevant reference file for the phase:
-   - Full staged workflow: `references/stage-gates.md`
-   - User intake and submission prompts: `references/user-intake.md`
-   - Progress board format: `references/progress-format.md`
-   - Module implementation loop: `references/module-handoff.md`
-   - Specialist selection: `references/skill-routing.md`
-   - Bounded child-skill handoff: `references/subskill-contract.md`
-4. Use helper scripts when their deterministic output fits the task:
-   - Initialize workflow status: `scripts/init_workflow.py`
-   - Create a module micro-PRD: `scripts/new_module.py`
-   - Check workflow files: `scripts/validate_workflow.py`
-   - Check installed specialists: `scripts/check_subskills.py`
-   - Select specialists for the phase: `scripts/route_subskills.py`
-5. Ask only for the minimum user input needed for the current gate. Prefer 1-3 concrete questions or a small submission checklist.
-6. When the user submits a module decision, spreadsheet, asset, prompt batch, or revised file, inspect the actual file/diff before implementing. Do not rely only on remembered context.
-7. Implement the current module end to end when its gate is ready: code, data wiring, assets, tests/manual checks, status update, and concise handoff note.
-8. After acceptance, move the next queued module into the active phase and repeat.
+Follow [module-handoff.md](references/module-handoff.md): intake, co-design a micro-PRD, get design approval, implement, verify, user review, then accept or revise. Documentation phases produce reviewed documents; implementation phases must produce runnable behavior and real checks.
 
-## Specialist Delegation
+- Freeze objective, triggers, states, data schema, UI touchpoints, allowed changes, non-goals and acceptance checks before implementation. Use `scripts/new_module.py` for a document scaffold if useful, then fill it from actual project evidence.
+- Register version modules with `workflow.py add`; use stable IDs and dependencies. This command registers scope, not implementation. New ideas go to backlog unless the user agrees to include them.
+- For a large inserted system, split independently acceptable slices such as data contract, minimum playable loop, full effects/UI and balance. Do not silently equate one big checklist with phased delivery.
+- Record actual user decisions with `--decision`, never invent approval. `ready_to_build` needs an approved spec file; `needs_user_review` needs validation artifacts; `accepted` needs the user's decision on those artifacts.
+- If the user changes inputs, reread the actual files and revise the current module. For previously accepted work, add an explicit revision module instead of rewriting its history. A delivered version gets a new workflow directory.
+- Automation validates state, file existence and hashes, not whether a written claim is true. Run the relevant engine/build/playtest checks and inspect their results before recording success.
 
-After the phase, engine, runtime, and accepted providers are known, use `scripts/route_subskills.py` to select only the specialists needed for the current slice. Before applying a selected skill, read its `SKILL.md` in full and follow any task-specific references it requires.
+## Specialists
 
-The orchestrator keeps authority over version scope, phase state, user intake, acceptance, and advancement. Give each specialist a contract from `references/subskill-contract.md` with an objective, source files, allowed scope, forbidden changes, required output, and return gate. Record the active delegation in `STATUS.md`.
+Read [skill-routing.md](references/skill-routing.md) only when specialist work is needed. Resolve the current module with `scripts/route_subskills.py`; use the manifest and content lock instead of remembered mappings. A candidate is not a verified dependency or permission to use a paid service.
 
-After delegated work returns, inspect the actual files or diff and validation evidence. The child skill's completion does not accept the module and does not authorize the next phase.
+Before applying a selected skill, read its `SKILL.md` and necessary references. Record a bounded [subskill contract](references/subskill-contract.md) with `workflow.py delegate`. Use the same agent unless actual delegation tools are available and appropriate. The CLI records the contract; it does not launch another agent.
 
-Important routing boundaries:
+The parent retains version scope, state and acceptance. Missing or modified dependencies require explicit remediation or a documented parent-only fallback, not a fictitious successful invocation. Preserve user customizations. Never auto-run upstream bootstraps, change providers, publish or incur charges merely because a child suggests it.
 
-- Use `game-feel` only after the underlying mechanic passes its functional checks.
-- Use `higgsfield-game-generation` only for art/audio design and assets, never as the owner of game code or deployment.
-- Use `multiplayer-game` only when RivetKit is the accepted backend. Native Godot multiplayer stays with the Godot adapter.
-- In the Three.js-specific Phase 7 UI pass, `threejs-game-ui-designer` replaces `game-ui-ux`.
-- `develop-web-game` may maintain its own `progress.md`, but the workflow `STATUS.md` remains authoritative.
+## Conditional Workflows
 
-## Core Loop
+- External tables/config: [data-workflow.md](references/data-workflow.md). Stable IDs, editable-field allowlist, actual before/after diff, validation, deterministic runtime export, in-engine check. Source files outrank conversational memory.
+- Art/animation/audio: [art-workflow.md](references/art-workflow.md). Preserve playable layout, approve an in-engine sample, freeze shared specs, batch by manifest, retain originals, revise selected IDs, verify integration.
+- Progress and resumption: [progress-format.md](references/progress-format.md). Record decisions and evidence without emotional conversation or invented historical quotes.
 
-Every phase follows this loop:
+## Delivery
 
-1. Clarify: define the smallest useful outcome and acceptance criteria.
-2. Structure: turn vague ideas into a PRD slice, state/data contract, or asset requirement.
-3. Build: land the implementation in the repo using existing project patterns.
-4. Verify: run automated checks where available and use manual/screenshot checks for gameplay and art.
-5. Log: update status, decisions, changed files, validation result, and next gate.
-6. Advance: only proceed when the current output is accepted or explicitly deferred.
-
-## Non-Negotiables
-
-- Keep each fixed version bounded. Park attractive but nonessential ideas in a backlog instead of expanding the active version.
-- Make systems modular: gameplay logic, data/configuration, presentation, and assets should be separately editable where the engine allows it.
-- External data wins over memory. If the user edits a spreadsheet, CSV, JSON, GDScript config, art requirement sheet, or asset folder outside the chat, read the current file and use that as source of truth.
-- Insert new gameplay modules through explicit contracts: purpose, trigger, affected states, data schema, UI touchpoints, tests, and rollback path.
-- For art iteration, first stabilize an HTML/mock/prototype or visual reference, then define batch asset specs, generate or collect assets, integrate them, and verify in-engine.
-- Keep progress visible. Every substantial turn should say what phase is active, what changed, what was verified, and what remains.
-
-## Output Style
-
-Respond in the user's working language. For Chinese projects, use concise Chinese status updates and Chinese workflow docs by default. Keep emotional or exploratory conversation out of implementation logs; preserve only decisions, commands, prompts, acceptance criteria, and reusable patterns.
+Close only when all fixed-version modules are accepted or explicitly deferred and the delivery gate is accepted. Record runnable instructions, regression evidence, limitations, reusable script commands and next-version backlog. Export the implementation log with `workflow.py export`; keep source Markdown when another format is requested. Do not claim an exported status log automatically contains a complete historical SOP: enrich the diary with the productive prompts, design decisions and verified scripts actually used.

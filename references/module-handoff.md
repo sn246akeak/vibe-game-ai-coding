@@ -8,7 +8,7 @@ Use this reference whenever the user submits or approves a module, such as a car
 2. Freeze the module contract.
 3. Implement the smallest complete slice.
 4. Verify the slice.
-5. Ask for review or mark accepted.
+5. Ask for review; mark accepted only with the user's actual acceptance.
 6. Expand or move to the next module.
 
 ## Step 1: Intake
@@ -79,7 +79,7 @@ When handing back to the user, include:
 - Known limitations.
 - The exact question for acceptance, such as "这个卡牌模块是否进入 accepted，还是继续调整数值/表现？"
 
-Do not start the next module until the user accepts, defers, or explicitly asks to continue.
+Do not start the next module until the user accepts or explicitly defers this module. An ambiguous "continue" during implementation means continue the current work, not accept unseen results.
 
 ## Step 6: Repeat
 

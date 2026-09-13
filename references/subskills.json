@@ -211,7 +211,8 @@
       "phase": 8,
       "skill": "game-feel",
       "mode": "feedback-pass",
-      "purpose": "Coordinate event timing across motion, camera, VFX, UI, and audio."
+      "purpose": "Coordinate event timing across motion, camera, VFX, UI, and audio.",
+      "when": {"mechanics_verified": [true]}
     },
     {
       "phase": 8,
