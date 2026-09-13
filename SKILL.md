@@ -22,14 +22,34 @@ On invocation:
    - User intake and submission prompts: `references/user-intake.md`
    - Progress board format: `references/progress-format.md`
    - Module implementation loop: `references/module-handoff.md`
+   - Specialist selection: `references/skill-routing.md`
+   - Bounded child-skill handoff: `references/subskill-contract.md`
 4. Use helper scripts when their deterministic output fits the task:
    - Initialize workflow status: `scripts/init_workflow.py`
    - Create a module micro-PRD: `scripts/new_module.py`
    - Check workflow files: `scripts/validate_workflow.py`
+   - Check installed specialists: `scripts/check_subskills.py`
+   - Select specialists for the phase: `scripts/route_subskills.py`
 5. Ask only for the minimum user input needed for the current gate. Prefer 1-3 concrete questions or a small submission checklist.
 6. When the user submits a module decision, spreadsheet, asset, prompt batch, or revised file, inspect the actual file/diff before implementing. Do not rely only on remembered context.
 7. Implement the current module end to end when its gate is ready: code, data wiring, assets, tests/manual checks, status update, and concise handoff note.
 8. After acceptance, move the next queued module into the active phase and repeat.
+
+## Specialist Delegation
+
+After the phase, engine, runtime, and accepted providers are known, use `scripts/route_subskills.py` to select only the specialists needed for the current slice. Before applying a selected skill, read its `SKILL.md` in full and follow any task-specific references it requires.
+
+The orchestrator keeps authority over version scope, phase state, user intake, acceptance, and advancement. Give each specialist a contract from `references/subskill-contract.md` with an objective, source files, allowed scope, forbidden changes, required output, and return gate. Record the active delegation in `STATUS.md`.
+
+After delegated work returns, inspect the actual files or diff and validation evidence. The child skill's completion does not accept the module and does not authorize the next phase.
+
+Important routing boundaries:
+
+- Use `game-feel` only after the underlying mechanic passes its functional checks.
+- Use `higgsfield-game-generation` only for art/audio design and assets, never as the owner of game code or deployment.
+- Use `multiplayer-game` only when RivetKit is the accepted backend. Native Godot multiplayer stays with the Godot adapter.
+- In the Three.js-specific Phase 7 UI pass, `threejs-game-ui-designer` replaces `game-ui-ux`.
+- `develop-web-game` may maintain its own `progress.md`, but the workflow `STATUS.md` remains authoritative.
 
 ## Core Loop
 

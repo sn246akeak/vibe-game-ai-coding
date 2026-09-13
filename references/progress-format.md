@@ -24,6 +24,15 @@ Maintain a project-local progress board. Prefer `docs/ai-coding-workflow/STATUS.
 - Needed from user:
 - Next AI action:
 
+## Active Delegation
+
+- Child skill:
+- Mode:
+- Objective:
+- Allowed scope:
+- Required output:
+- Return gate:
+
 ## Module Queue
 
 | Order | Module | Purpose | State | Source of Truth | Gate |
@@ -46,6 +55,8 @@ Maintain a project-local progress board. Prefer `docs/ai-coding-workflow/STATUS.
 | Idea | Reason Deferred | Revisit In |
 |---|---|---|
 ```
+
+Leave `Child skill` blank when the orchestrator is working directly. Clear the delegation after its output has been inspected and returned to the phase gate.
 
 ## Module States
 

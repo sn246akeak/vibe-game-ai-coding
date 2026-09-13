@@ -66,6 +66,35 @@ docs/ai-coding-workflow/STATUS.md
 6. 更新进度文件。
 7. 当前模块验收后，再推进下一模块。
 
+## 子 skill 自动编排
+
+总 skill 负责版本范围、阶段状态、用户提交、验收和推进；专业子 skill 只处理当前委派的有限任务。阶段和工程上下文确定后，可以让 AI 运行：
+
+```bash
+python scripts/route_subskills.py --phase 2 --engine godot
+```
+
+典型自动路由包括：
+
+- `game-design-theory`：核心玩法、PRD 和模块价值复核。
+- `godot`：Godot 场景、资源、信号、实现和发布验证。
+- `develop-web-game`：可操作的 HTML/JavaScript 原型及 Playwright 验证。
+- `game-ui-ux`：屏幕流、HUD、焦点、缩放和状态连接。
+- `game-feel`：机制通过功能验证后的反馈与手感。
+- `higgsfield-game-generation`：可选的美术和音频资产生产，不接管游戏代码。
+- `threejs-game-ui-designer`：仅 Three.js 最终 UI 阶段，替换通用 UI skill。
+- `multiplayer-game`：仅明确采用 RivetKit 时启用。
+
+依赖来源和固定版本记录在 `references/subskills.json`。检查本机安装情况：
+
+```bash
+python scripts/check_subskills.py
+```
+
+子 skill 独立安装在 Codex skills 目录中，不复制进本仓库。首次使用时，可以让 Codex 读取该清单并通过 `skill-installer` 安装缺少的核心能力；Higgsfield、Three.js 和 RivetKit 等可选能力只在项目实际采用时安装或启用。
+
+每次委派都必须使用 `references/subskill-contract.md` 限定目标、输入文件、允许范围、禁止改动、产出和返回验收门。子 skill 完成不等于模块验收，也不能自行推进下一阶段。
+
 ## 标准阶段
 
 | 阶段 | 目标 | 典型产出 |
@@ -127,6 +156,18 @@ python scripts/new_module.py "card system" --project /path/to/game --purpose "ad
 python scripts/validate_workflow.py --project /path/to/game
 ```
 
+检查专业子 skill 是否安装：
+
+```bash
+python scripts/check_subskills.py
+```
+
+按当前阶段和工程上下文选择子 skill：
+
+```bash
+python scripts/route_subskills.py --phase 4 --engine godot --mechanics-verified
+```
+
 这些脚本默认写入目标项目的：
 
 ```text
@@ -142,14 +183,22 @@ vibe-game-ai-coding/
 |-- agents/
 |   `-- openai.yaml
 |-- scripts/
+|   |-- check_subskills.py
 |   |-- init_workflow.py
 |   |-- new_module.py
+|   |-- route_subskills.py
+|   |-- subskill_router.py
 |   `-- validate_workflow.py
-`-- references/
-    |-- stage-gates.md
-    |-- user-intake.md
-    |-- progress-format.md
-    `-- module-handoff.md
+|-- references/
+|   |-- stage-gates.md
+|   |-- user-intake.md
+|   |-- progress-format.md
+|   |-- module-handoff.md
+|   |-- skill-routing.md
+|   |-- subskill-contract.md
+|   `-- subskills.json
+`-- tests/
+    `-- test_subskill_routing.py
 ```
 
 ## English
@@ -218,6 +267,26 @@ Every phase uses the same loop:
 6. Update the progress file.
 7. Move to the next module only after acceptance.
 
+## Subskill Orchestration
+
+The parent skill owns version scope, phase state, user submissions, acceptance, and advancement. Specialist skills receive only one bounded delegated task. Once phase and project context are known, the agent can run:
+
+```bash
+python scripts/route_subskills.py --phase 2 --engine godot
+```
+
+The router can select design theory, Godot, browser prototyping, UI/UX, game feel, asset generation, Three.js UI, or RivetKit multiplayer according to the active phase and accepted project choices. It never treats a child skill as a second orchestrator.
+
+Pinned dependency sources live in `references/subskills.json`. Check the local installation with:
+
+```bash
+python scripts/check_subskills.py
+```
+
+Subskills are installed separately in the Codex skills directory rather than copied into this repository. On first use, ask Codex to read the manifest and use `skill-installer` for missing core capabilities. Optional Higgsfield, Three.js, and RivetKit capabilities should be installed or activated only when the project actually selects them.
+
+Every handoff uses `references/subskill-contract.md` to declare the objective, actual source files, allowed scope, forbidden changes, required outputs, and return gate. Child completion does not accept a module or authorize the next phase.
+
 ## Standard Phases
 
 | Phase | Goal | Typical Output |
@@ -279,6 +348,18 @@ Validate workflow file structure:
 python scripts/validate_workflow.py --project /path/to/game
 ```
 
+Check installed specialist skills:
+
+```bash
+python scripts/check_subskills.py
+```
+
+Select specialists for the active phase:
+
+```bash
+python scripts/route_subskills.py --phase 4 --engine godot --mechanics-verified
+```
+
 By default, these scripts write into the target project's:
 
 ```text
@@ -294,12 +375,20 @@ vibe-game-ai-coding/
 |-- agents/
 |   `-- openai.yaml
 |-- scripts/
+|   |-- check_subskills.py
 |   |-- init_workflow.py
 |   |-- new_module.py
+|   |-- route_subskills.py
+|   |-- subskill_router.py
 |   `-- validate_workflow.py
-`-- references/
-    |-- stage-gates.md
-    |-- user-intake.md
-    |-- progress-format.md
-    `-- module-handoff.md
+|-- references/
+|   |-- stage-gates.md
+|   |-- user-intake.md
+|   |-- progress-format.md
+|   |-- module-handoff.md
+|   |-- skill-routing.md
+|   |-- subskill-contract.md
+|   `-- subskills.json
+`-- tests/
+    `-- test_subskill_routing.py
 ```

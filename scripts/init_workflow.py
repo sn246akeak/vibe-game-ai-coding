@@ -27,6 +27,15 @@ STATUS_TEMPLATE = """# AI Coding Game Workflow Status
 - Needed from user: confirm fixed version target, current source of truth, and next playable/visible result
 - Next AI action: inspect the project and prepare Phase 1 core gameplay intake
 
+## Active Delegation
+
+- Child skill:
+- Mode:
+- Objective:
+- Allowed scope:
+- Required output:
+- Return gate:
+
 ## Module Queue
 
 | Order | Module | Purpose | State | Source of Truth | Gate |

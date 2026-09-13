@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "orchestrator": "vibe-game-ai-coding",
+  "dependencies": [
+    {
+      "name": "game-design-theory",
+      "tier": "core",
+      "source": {
+        "repo": "pluginagentmarketplace/custom-plugin-game-developer",
+        "path": "skills/game-design-theory",
+        "ref": "aa7edfe267b34eac63d888f60b13e08aca7850ed"
+      }
+    },
+    {
+      "name": "game-ui-ux",
+      "tier": "core",
+      "source": {
+        "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+        "path": "skills/disciplines/game-ui-ux",
+        "ref": "b105e1cf617adf0b68ed98790a716bbb60993179"
+      }
+    },
+    {
+      "name": "game-feel",
+      "tier": "core",
+      "source": {
+        "repo": "gamedev-skills/awesome-gamedev-agent-skills",
+        "path": "skills/disciplines/game-feel",
+        "ref": "b105e1cf617adf0b68ed98790a716bbb60993179"
+      }
+    },
+    {
+      "name": "godot",
+      "tier": "adapter",
+      "source": {
+        "repo": "saschb2b/skills",
+        "path": "skills/engineering/godot",
+        "ref": "91187b37de762ec19155895a691fc34a4d994f58"
+      }
+    },
+    {
+      "name": "develop-web-game",
+      "tier": "adapter",
+      "source": {
+        "repo": "openai/skills",
+        "path": "skills/.curated/develop-web-game",
+        "ref": "77963424cd7687fd52e5fcfdd3f08d826ab9b1ab"
+      },
+      "note": "Pinned archival revision; the path was removed from the source repository later."
+    },
+    {
+      "name": "higgsfield-game-generation",
+      "tier": "optional",
+      "source": {
+        "repo": "higgsfield-ai/skills",
+        "path": "higgsfield-game-generation",
+        "ref": "9db2e5bf22ff93d0bffb48664a8d0d6bb417082c"
+      },
+      "note": "Use only for art and audio assets. It does not own game code or deployment."
+    },
+    {
+      "name": "threejs-game-ui-designer",
+      "tier": "optional",
+      "source": {
+        "repo": "majidmanzarpour/threejs-game-skills",
+        "path": "skills/threejs-game-ui-designer",
+        "ref": "e5f301d548bb18c530afbece78cd25082f4cda9c"
+      }
+    },
+    {
+      "name": "multiplayer-game",
+      "tier": "optional",
+      "source": {
+        "repo": "rivet-dev/skills",
+        "path": "multiplayer-game",
+        "ref": "ba5d3db3d7489cfc6190fd0de45b96e3787e1ea3"
+      },
+      "note": "RivetKit-specific. Do not route native Godot multiplayer work here."
+    }
+  ],
+  "routes": [
+    {
+      "phase": 1,
+      "skill": "game-design-theory",
+      "mode": "design-review",
+      "purpose": "Turn the core loop and target feeling into testable design decisions."
+    },
+    {
+      "phase": 1,
+      "skill": "develop-web-game",
+      "mode": "prototype",
+      "purpose": "Build and operate a deterministic HTML gameplay prototype.",
+      "when": {"prototype": ["web"]}
+    },
+    {
+      "phase": 2,
+      "skill": "game-design-theory",
+      "mode": "prd-review",
+      "purpose": "Review the PRD for meaningful decisions, balance risks, and progression."
+    },
+    {
+      "phase": 2,
+      "skill": "game-ui-ux",
+      "mode": "ui-architecture",
+      "purpose": "Define screen flow, HUD hierarchy, focus, scaling, and state wiring."
+    },
+    {
+      "phase": 2,
+      "skill": "godot",
+      "mode": "engine-architecture",
+      "purpose": "Map the PRD to Godot scenes, resources, signals, and system boundaries.",
+      "when": {"engine": ["godot"]}
+    },
+    {
+      "phase": 2,
+      "skill": "multiplayer-game",
+      "mode": "network-architecture",
+      "purpose": "Design RivetKit matchmaking, authority, synchronization, and validation.",
+      "when": {"multiplayer_backend": ["rivetkit"]}
+    },
+    {
+      "phase": 3,
+      "skill": "game-ui-ux",
+      "mode": "white-box-ui",
+      "purpose": "Keep the placeholder interface navigable and resolution-safe."
+    },
+    {
+      "phase": 3,
+      "skill": "godot",
+      "mode": "white-box-build",
+      "purpose": "Implement and verify the playable Godot session.",
+      "when": {"engine": ["godot"]}
+    },
+    {
+      "phase": 3,
+      "skill": "develop-web-game",
+      "mode": "white-box-build",
+      "purpose": "Implement and operate the playable browser session.",
+      "when": {"engine": ["web", "html", "javascript", "threejs"]}
+    },
+    {
+      "phase": 4,
+      "skill": "game-design-theory",
+      "mode": "module-review",
+      "purpose": "Check that the inserted module strengthens the core decision loop."
+    },
+    {
+      "phase": 4,
+      "skill": "godot",
+      "mode": "module-implementation",
+      "purpose": "Implement the module through Godot-native boundaries.",
+      "when": {"engine": ["godot"]}
+    },
+    {
+      "phase": 4,
+      "skill": "multiplayer-game",
+      "mode": "network-implementation",
+      "purpose": "Implement the module across RivetKit authority and synchronization boundaries.",
+      "when": {"multiplayer_backend": ["rivetkit"]}
+    },
+    {
+      "phase": 4,
+      "skill": "game-feel",
+      "mode": "module-polish",
+      "purpose": "Add proportional feedback only after the mechanic is verified.",
+      "when": {"mechanics_verified": [true]}
+    },
+    {
+      "phase": 5,
+      "skill": "godot",
+      "mode": "data-integration",
+      "purpose": "Map validated external data into Godot resources and runtime behavior.",
+      "when": {"engine": ["godot"]}
+    },
+    {
+      "phase": 6,
+      "skill": "higgsfield-game-generation",
+      "mode": "assets-only",
+      "purpose": "Produce art requirements, a style formula, a manifest, and sample-first assets.",
+      "when": {"art_provider": ["higgsfield"]}
+    },
+    {
+      "phase": 7,
+      "skill": "game-ui-ux",
+      "mode": "ui-integration",
+      "purpose": "Integrate final UI while preserving layout, focus, and state behavior."
+    },
+    {
+      "phase": 7,
+      "skill": "threejs-game-ui-designer",
+      "mode": "ui-integration",
+      "purpose": "Own the Three.js-specific UI pass and viewport evidence.",
+      "when": {"engine": ["threejs"]},
+      "replaces": ["game-ui-ux"]
+    },
+    {
+      "phase": 7,
+      "skill": "godot",
+      "mode": "art-integration",
+      "purpose": "Configure imports, layers, animation, scene placement, and engine checks.",
+      "when": {"engine": ["godot"]}
+    },
+    {
+      "phase": 7,
+      "skill": "higgsfield-game-generation",
+      "mode": "asset-revision",
+      "purpose": "Regenerate only rejected assets while preserving the accepted style formula.",
+      "when": {"art_provider": ["higgsfield"]}
+    },
+    {
+      "phase": 8,
+      "skill": "game-feel",
+      "mode": "feedback-pass",
+      "purpose": "Coordinate event timing across motion, camera, VFX, UI, and audio."
+    },
+    {
+      "phase": 8,
+      "skill": "higgsfield-game-generation",
+      "mode": "audio-assets",
+      "purpose": "Generate manifest-backed music, SFX, or voice assets.",
+      "when": {"art_provider": ["higgsfield"]}
+    },
+    {
+      "phase": 9,
+      "skill": "godot",
+      "mode": "release-validation",
+      "purpose": "Run Godot import, headless, export, and release checks.",
+      "when": {"engine": ["godot"]}
+    },
+    {
+      "phase": 9,
+      "skill": "develop-web-game",
+      "mode": "release-validation",
+      "purpose": "Run browser interactions, screenshot checks, and console validation.",
+      "when": {"engine": ["web", "html", "javascript", "threejs"]}
+    },
+    {
+      "phase": 9,
+      "skill": "multiplayer-game",
+      "mode": "network-validation",
+      "purpose": "Validate RivetKit authority, reconnection, synchronization, and multiplayer sessions.",
+      "when": {"multiplayer_backend": ["rivetkit"]}
+    }
+  ]
+}
